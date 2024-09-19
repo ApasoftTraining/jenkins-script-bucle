@@ -35,6 +35,7 @@ node('prod'){
     else {
         def dirPath='c:/jenkins/jenkins-loop' 
     }
+    echo dirPath
     def dir=new File(dirPath)
     // If the directory exists, delete it
     if (dir.exists()  && dir.isDirectory()  ){
