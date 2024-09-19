@@ -27,7 +27,7 @@ node ('dev') {
 
 node('prod'){
     //We make an untash of the file
-     untash  'Packaged Files'
+     unstash  'Packaged Files'
     //We create a File Object, depending if is Linux or Windows
     if (isUnix()){
         def dirPath='/home/jenkins/jenkins-loop'
