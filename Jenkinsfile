@@ -29,11 +29,12 @@ node('prod'){
     //We make an untash of the file
      unstash  'Packaged Files'
     //We create a File Object, depending if is Linux or Windows
+    def dirPath=""
     if (isUnix()){
-        def dirPath='/home/jenkins/jenkins-loop'
+         dirPath='/home/jenkins/jenkins-loop'
     }
     else {
-        def dirPath='c:/jenkins/jenkins-loop' 
+         dirPath='c:/jenkins/jenkins-loop' 
     }
     echo dirPath
     def dir=new File(dirPath)
