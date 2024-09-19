@@ -1,5 +1,6 @@
 node ('dev') {
     
+    git branch: 'main', url: 'https://github.com/ApasoftTraining/jenkins-script-bucle.git'
     
     // List of  files to ZIP
     def jarFiles = ['file1.jar', 'file2.jar', 'file3.jar', 'file4.jar', 'file5.jar']
