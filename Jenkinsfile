@@ -26,26 +26,31 @@ node ('dev') {
 }
 
 node('prod'){
-    //We make an untash of the file
-     unstash  'Packaged Files'
-    //We create a File Object, depending if is Linux or Windows
-    def dirPath=""
-    if (isUnix()){
-         dirPath='/home/jenkins/jenkins-loop'
+
+    //We make an unstash of the file
+    unstash 'Packaged Files'
+    
+    // If the directory exists, delete it // We create the directory
+    def dir=""
+    if (isUnix())
+    {
+        dir="/home/jenkins/jenkins-loop"
+        sh "rm -rf ${dir}"
+        sh "mkdir ${dir}"
+        sh "tar xvf files.tar"
+        sh "cp *.jar ${dir}"
     }
     else {
-         dirPath='c:/jenkins/jenkins-loop' 
+        dir="C:/jenkins/jenkins-loop" // c:\\jenkins\\
+        bat "rmdir /Q /S ${dir} "
+        bat "mkdir ${dir}"
+        bat "unzip files.tar"
+        bat "copy *.jar ${dir}"
     }
-    echo dirPath
-    def dir=new File(dirPath)
-    // If the directory exists, delete it
-    if (dir.exists()  && dir.isDirectory()  ){
-        dir.deleteDir()
-    }
-    dir.mkdirs()  
+     
    
-    //I unzip and copy the files to the DEST dir
-    sh "tar xvf files.tar" // bat "unzip files.tar"
-    sh "cp *.jar ${dirPath}" //copy *.jar 
+    //I unpack and copy the files to the DEST dir
+
+    
        
 }
