@@ -6,57 +6,43 @@ node ('dev') {
 
     stage('PACK Files in files.tar') {
         try {
-            // Loop through each file and deploy using a for loop
-            for (int i = 0; i < jarFiles.size(); i++) {
-                def file = jarFiles[i]
-                echo "Packing ${file}..."
-                tar rvf files.tar ${file}
-            }           
-            echo "All JAR files packaged successfully"
+            // Loop through each file and deploy using a for loop         
+            for (int i=0; i < jarFiles.size(); i++){
+                def file=jarFiles[i]
+                sh "tar rvf files.tar ${file}"
+            }
+               echo "Package finished"
             //Prepare the file for the next node
             stash includes: '*.tar', name: 'Packaged Files'
         } catch (Exception e) {
-            echo "Package failed: ${e.getMessage()}"
-            currentBuild.result = 'FAILURE'
+            //Control error
+            echo "Packaged failed: ${e.getMessage()}"
+            currentBuild.result='FAILURE'
             throw e
+            
         }
     }
 }
 
 node('prod'){
     //We make an untash of the file
-    unstash 'Packaged Files' 
-    
-    //We create a File Object, depending if is Linux or Windfows
-    if (isLinux(){
-        def dirPath = '/home/jenkins/jenkins-loop'
+     untash  'Packaged Files'
+    //We create a File Object, depending if is Linux or Windows
+    if (isUnix()){
+        def dirPath='/home/jenkins/jenkins-loop'
     }
     else {
-        def dirPath = 'c:/jenkins/jenkins-loop'
+        def dirPath='c:/jenkins/jenkins-loop' 
     }
-     
-    def dir= new File(dirPath)
+    def dir=new File(dirPath)
     // If the directory exists, delete it
-    if (dir.exists() && dir.isDirectory()) {
-        println "The directory '${dirPath}' exists. Deleting it..."
-        
-        // Drop dierectory
-        if (dir.deleteDir()) {
-            println "The directory '${dirPath}' was successfully deleted."
-        } else {
-            println "Failed to delete the directory '${dirPath}'."
-        }
-    } else {
-        // If it doesn't exist, create it
-        println "The directory '${dirPath}' does not exist. Creating it..."
-        
-        if (dir.mkdirs()) {
-            println "The directory '${dirPath}' was successfully created."
-        } else {
-            println "Failed to create the directory '${dirPath}'."
-        }
+    if (dir.exists()  && dir.isDirectory()  ){
+        dir.deleteDir()
     }
-        //I unzip and copy the files to the DEST dir
-        sh "tar xvf files.tar"
-        sh "cp files.tar ${dir}"
+    dir.mkdirs()  
+   
+    //I unzip and copy the files to the DEST dir
+    sh "tar xvf files.tar" // bat "unzip files.tar"
+    sh "cp *.jar ${dirPath}" //copy *.jar 
+       
 }
